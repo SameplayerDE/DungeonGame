@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 
 namespace QColonFrame
 {
@@ -8,12 +9,14 @@ namespace QColonFrame
         public Game Game;
         public Guid Id;
         public string Name;
+        protected ContentManager Content;
 
         public QCScene(string name, Game game)
         {
             Id = Guid.NewGuid();
             Game = game;
             Name = name;
+            Content = new ContentManager(game.Services, "Content");
         }
 
         public override bool Equals(object obj)
