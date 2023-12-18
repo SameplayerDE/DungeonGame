@@ -53,7 +53,7 @@ namespace Client
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            
+            QCSceneHandler.Instance.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -69,7 +69,7 @@ namespace Client
             //_spriteBatch.End();
 
             //GraphicsDevice.SetRenderTarget(_renderTarget);
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
             QCSceneHandler.Instance.Draw(gameTime);
             //GraphicsDevice.SetRenderTarget(null);
 
