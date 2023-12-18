@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using DungeonFrame;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,20 +11,21 @@ namespace Client
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private QCEntity qC;
+        private QCRenderContext _context;
+        private DungeonEntity _player;
 
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
+            _context = new QCRenderContext();
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-
-            qC.Id
         }
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            _player = new DungeonEntity();
+            _player.Flags = DungeonEntityFlags.Drawable;
 
             base.Initialize();
         }
@@ -31,8 +33,10 @@ namespace Client
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            _context.SpriteBatch = _spriteBatch;
 
-            // TODO: use this.Content to load your game content here
+            _player.Texture = Content.Load<Texture2D>("missing");
+
         }
 
         protected override void Update(GameTime gameTime)
@@ -40,7 +44,7 @@ namespace Client
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            
 
             base.Update(gameTime);
         }
@@ -49,7 +53,11 @@ namespace Client
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            _spriteBatch.Begin();
+
+            _player.Draw(_context, gameTime);
+
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }
