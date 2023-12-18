@@ -5,12 +5,14 @@ namespace QColonFrame
     public partial class QCScene
     {
 
+        public Game Game;
         public Guid Id;
         public string Name;
 
-        public QCScene(string name)
+        public QCScene(string name, Game game)
         {
             Id = Guid.NewGuid();
+            Game = game;
             Name = name;
         }
 
