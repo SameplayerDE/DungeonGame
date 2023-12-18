@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using DungeonFrame;
+using QColonFrame;
 
 namespace Client
 {
@@ -10,13 +10,15 @@ namespace Client
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private Item _item;
+        private QCEntity qC;
 
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+
+            qC.Id
         }
 
         protected override void Initialize()

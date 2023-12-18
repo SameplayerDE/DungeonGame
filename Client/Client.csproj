@@ -24,7 +24,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DungeonFrame\DungeonFrame.csproj" />
-    <ProjectReference Include="..\QColonFrame\QColonFrame.csproj" />
   </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
     <Message Text="Restoring dotnet tools" Importance="High" />
