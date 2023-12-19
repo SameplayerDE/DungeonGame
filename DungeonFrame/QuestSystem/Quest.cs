@@ -13,7 +13,7 @@ namespace DungeonFrame.QuestSystem
         public string Description { get; set; }
         public List<QuestObjective> Objectives { get; private set; }
         public QuestStatus Status { get; set; }
-        public Action OnComplete { get; set; }
+        public Action OnCompletion { get; set; }
 
         public Quest(string title, string description)
         {
@@ -43,7 +43,7 @@ namespace DungeonFrame.QuestSystem
             if (CheckIfComplete())
             {
                 Status = QuestStatus.Completed;
-                OnComplete?.Invoke();
+                OnCompletion?.Invoke();
             }
         }
     }
