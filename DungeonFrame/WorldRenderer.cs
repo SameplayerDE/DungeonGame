@@ -11,9 +11,7 @@ namespace DungeonFrame
 
         public static int RenderCalls = 0;
 
-        private WorldRenderer()
-        {
-        }
+        private WorldRenderer() { }
 
         public void Draw(QCRenderContext context, GameTime gameTime, World world, Texture2D tileSet)
         {
@@ -27,33 +25,47 @@ namespace DungeonFrame
             var topLeft = Vector2.Transform(Vector2.Zero, inverseViewMatrix);
             var bottomRight = Vector2.Transform(new Vector2(context.SpriteBatch.GraphicsDevice.Viewport.Width, context.SpriteBatch.GraphicsDevice.Viewport.Height), inverseViewMatrix);
 
-            for (int y = 0; y < world.Height; y++)
+            // Durchlaufe alle Chunks
+            foreach (var chunkEntry in world.Chunks)
             {
-                for (int x = 0; x < world.Width; x++)
+                var chunk = chunkEntry.Value;
+                // Berechne globale Position des Chunks
+                int chunkGlobalX = chunk.X * world.ChunkSize;
+                int chunkGlobalY = chunk.Y * world.ChunkSize;
+
+                for (int localY = 0; localY < chunk.Height; localY++)
                 {
-                    // Isometrische Positionierung auf dem Bildschirm
-                    int isoX = (x - y) * (tileWidth / 2);
-                    int isoY = (x + y) * (tileHeight / 2);
-
-                    // Prüfen, ob das Tile im sichtbaren Bereich liegt
-                    if (isoX > topLeft.X - tileWidth && isoX < bottomRight.X && isoY > topLeft.Y - tileHeight && isoY < bottomRight.Y)
+                    for (int localX = 0; localX < chunk.Width; localX++)
                     {
-                        Tile tile = world.GetTile(x, y);
-                        if (tile != null)
+                        // Globale Tile-Position
+                        int globalX = chunkGlobalX + localX;
+                        int globalY = chunkGlobalY + localY;
+
+                        // Isometrische Positionierung
+                        int isoX = (globalX - globalY) * (tileWidth / 2);
+                        int isoY = (globalX + globalY) * (tileHeight / 2);
+
+                        // Prüfen, ob das Tile im sichtbaren Bereich liegt
+                        if (isoX > topLeft.X - tileWidth && isoX < bottomRight.X && isoY > topLeft.Y - tileHeight && isoY < bottomRight.Y)
                         {
-                            int tileDepth = tile.Depth;
+                            int tileId = chunk.Tiles[localX, localY];
+                            Tile tile = world.GetTileById(tileId);
+                            if (tile != null)
+                            {
+                                int tileDepth = tile.Depth;
 
-                            // Berechnung der source Rectangle, basierend auf der Tile-ID
-                            int tileRow = tile.Id / (tileSet.Width / tileWidth);
-                            int tileColumn = tile.Id % (tileSet.Width / tileWidth);
-                            Rectangle source = new Rectangle(tileColumn * tileWidth, tileRow * (tileHeight + tileDepth), tileWidth, tileHeight + tileDepth);
+                                // Berechnung der source Rectangle
+                                int tileRow = tile.Id / (tileSet.Width / tileWidth);
+                                int tileColumn = tile.Id % (tileSet.Width / tileWidth);
+                                Rectangle source = new Rectangle(tileColumn * tileWidth, tileRow * (tileHeight + tileDepth), tileWidth, tileHeight + tileDepth);
 
-                            // Anpassung für die Tiefe
-                            isoY -= tileDepth;
+                                // Anpassung für die Tiefe
+                                isoY -= tileDepth;
 
-                            Rectangle destination = new Rectangle(isoX, isoY, tileWidth, tileHeight + tileDepth);
-                            context.SpriteBatch.Draw(tileSet, destination, source, Color.White);
-                            RenderCalls++;
+                                Rectangle destination = new Rectangle(isoX, isoY, tileWidth, tileHeight + tileDepth);
+                                context.SpriteBatch.Draw(tileSet, destination, source, Color.White);
+                                RenderCalls++;
+                            }
                         }
                     }
                 }
@@ -61,4 +73,5 @@ namespace DungeonFrame
             Console.WriteLine("RenderCalls: " + RenderCalls);
         }
     }
+
 }
