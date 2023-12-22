@@ -32,5 +32,16 @@ namespace DungeonFrame
             return Tiles[x, y] = value;
         }
 
+        public Tile GetTileById(int id)
+        {
+            return _tileAtlas.GetTile(id);
+        }
+
+        public Tile GetTile(int x, int y)
+        {
+            int id = Tiles[x, y];
+            return _tileAtlas.GetTile(id);
+        }
+
     }
 }
