@@ -28,15 +28,34 @@ namespace QColonFrame
         {
             // Hier können Animations-Updates oder glatte Übergänge implementiert werden.
 
-            // Beispiel für eine Kamera-Begrenzung:
+            Zoom = Math.Clamp(Zoom, 0.05f, 100f);
+
             if (Limits.HasValue)
             {
+                AdjustZoomWithinLimits();
                 var cameraWorldMin = Vector2.Transform(Vector2.Zero, Matrix.Invert(GetViewMatrix()));
                 var cameraSize = new Vector2(_viewport.Width / Zoom, _viewport.Height / Zoom);
                 var limitWorldMin = new Vector2(Limits.Value.Left, Limits.Value.Top);
                 var limitWorldMax = new Vector2(Limits.Value.Right, Limits.Value.Bottom);
                 var positionOffset = Position - cameraWorldMin;
                 Position = Vector2.Clamp(cameraWorldMin, limitWorldMin, limitWorldMax - cameraSize) + positionOffset;
+            }
+        }
+
+        private void AdjustZoomWithinLimits()
+        {
+            var cameraWorldSize = new Vector2(_viewport.Width / Zoom, _viewport.Height / Zoom);
+            var worldSize = new Vector2(Limits.Value.Width, Limits.Value.Height);
+
+            // Stelle sicher, dass der gezoomte Bereich nicht größer als die Welt ist
+            if (cameraWorldSize.X > worldSize.X)
+            {
+                Zoom = _viewport.Width / worldSize.X;
+            }
+
+            if (cameraWorldSize.Y > worldSize.Y)
+            {
+                Zoom = _viewport.Height / worldSize.Y;
             }
         }
 

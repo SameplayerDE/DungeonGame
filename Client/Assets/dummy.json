@@ -11,32 +11,32 @@
   },
   {
     "Id": 2,
-    "Depth": 64,
+    "Depth": 32,
     "IsWalkable": true
   },
   {
     "Id": 3,
-    "Depth": 128,
+    "Depth": 32,
     "IsWalkable": false
   },
   {
     "Id": 4,
-    "Depth": 64,
+    "Depth": 32,
     "IsWalkable": true
   },
   {
     "Id": 5,
-    "Depth": 80,
+    "Depth": 32,
     "IsWalkable": true
   },
   {
     "Id": 6,
-    "Depth": 96,
+    "Depth": 32,
     "IsWalkable": true
   },
   {
     "Id": 7,
-    "Depth": 0,
+    "Depth": 32,
     "IsWalkable": true
   }
 ]

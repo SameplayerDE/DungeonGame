@@ -1,6 +1,7 @@
 ﻿using DungeonFrame;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using QColonFrame;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace Client.Scenes
         private Texture2D _tileSet;
         private float _noiseOffsetX = 0f;
         private float _noiseOffsetY = 0f;
+        private float currentScrollValue = 0f;
 
         public DummyScene(Game game) : base("dummy", game)
         {
@@ -64,16 +66,10 @@ namespace Client.Scenes
 
         public override void Update(GameTime gameTime)
         {
-
-            // Weiches Bewegen der Kamera zur Zielposition
-            var currentPos = QCSceneHandler.Instance.RenderContext.Camera.Position;
-            QCSceneHandler.Instance.RenderContext.Camera.Position = Vector2.Lerp(currentPos, currentPos + new Vector2(10, 10), 0.05f);
-            QCSceneHandler.Instance.RenderContext.Camera.Zoom = 0.5f;
-
             float noiseScale = 4;
 
-            _noiseOffsetX += 0.2f; // Geschwindigkeit der Rauschbewegung in X
-            _noiseOffsetY += 0.2f; // Geschwindigkeit der Rauschbewegung in Y
+            _noiseOffsetX += 0.1f; // Geschwindigkeit der Rauschbewegung in X
+            _noiseOffsetY += 0.1f; // Geschwindigkeit der Rauschbewegung in Y
 
             for (int y = 0; y < _world.Height; y++)
             {
@@ -97,6 +93,29 @@ namespace Client.Scenes
                     _world.Set(x, y, tileId);
                 }
             }
+
+            
+            float previousScrollValue = currentScrollValue; // Du musst den vorherigen Scroll-Wert speichern
+            currentScrollValue = Mouse.GetState().ScrollWheelValue;
+            float zoomSpeed = 0.001f; // Geschwindigkeit des Zooms, kannst du anpassen
+            QCSceneHandler.Instance.RenderContext.Camera.Zoom += (currentScrollValue - previousScrollValue) * zoomSpeed;
+
+
+            Vector2 cameraMove = Vector2.Zero;
+            float moveSpeed = 5f; // Bewegungsgeschwindigkeit, kannst du anpassen
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                cameraMove.Y -= moveSpeed;
+            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                cameraMove.Y += moveSpeed;
+            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+                cameraMove.X -= moveSpeed;
+            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                cameraMove.X += moveSpeed;
+
+            QCSceneHandler.Instance.RenderContext.Camera.Position += cameraMove;
+
+
         }
 
         public override void Draw(QCRenderContext context, GameTime gameTime)
