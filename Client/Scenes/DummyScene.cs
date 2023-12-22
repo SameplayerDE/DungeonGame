@@ -11,6 +11,8 @@ namespace Client.Scenes
     {
         private List<DungeonEntity> _entities;
         private FastNoiseLite _noise;
+        private World _world;
+        private Texture2D _tileSet;
         private float _noiseOffsetX = 0f;
         private float _noiseOffsetY = 0f;
 
@@ -39,6 +41,16 @@ namespace Client.Scenes
                 }
             }
 
+            _world = new World(100, 100);
+            for (int y = 0; y < 100; y++)
+            {
+                for (int x = 0; x < 100; x++)
+                {
+                    // Setze alle Tiles auf die ID 0, welche später in Update() aktualisiert werden.
+                    _world.Set(x, y, 0);
+                }
+            }
+
             base.Initialize();
         }
 
@@ -46,67 +58,52 @@ namespace Client.Scenes
         {
             var texture = Content.Load<Texture2D>("missing");
             _entities.ForEach(e => e.Texture = texture);
+            _tileSet = Content.Load<Texture2D>("tileset");
             base.LoadContent();
         }
 
         public override void Update(GameTime gameTime)
         {
-            float noiseScale = 2;
+
+            // Weiches Bewegen der Kamera zur Zielposition
+            var currentPos = QCSceneHandler.Instance.RenderContext.Camera.Position;
+            QCSceneHandler.Instance.RenderContext.Camera.Position = Vector2.Lerp(currentPos, currentPos + new Vector2(10, 10), 0.05f);
+            QCSceneHandler.Instance.RenderContext.Camera.Zoom = 0.5f;
+
+            float noiseScale = 4;
 
             _noiseOffsetX += 0.2f; // Geschwindigkeit der Rauschbewegung in X
             _noiseOffsetY += 0.2f; // Geschwindigkeit der Rauschbewegung in Y
 
-            foreach (var e in _entities)
+            for (int y = 0; y < _world.Height; y++)
             {
-                float x = e.Position.X / 4 + _noiseOffsetX;
-                float y = e.Position.Y / 4 + _noiseOffsetY;
+                for (int x = 0; x < _world.Width; x++)
+                {
+                    float noiseValue = _noise.GetNoise(
+                        (x + _noiseOffsetX) * noiseScale,
+                        (y + _noiseOffsetY) * noiseScale,
+                        (float)gameTime.TotalGameTime.TotalSeconds * 10);
 
-                var noiseValue = _noise.GetNoise(x * noiseScale, y * noiseScale, (float)gameTime.TotalGameTime.TotalSeconds * 10);
+                    int tileId;
+                    if (noiseValue < -0.6) tileId = 7; // ID für Tiefer Ozean
+                    else if (noiseValue < -0.2) tileId = 48; // ID für Flacher Ozean
+                    else if (noiseValue < 0) tileId = 49; // ID für Küstenbereich
+                    else if (noiseValue < 0.2) tileId = 50; // ID für Strand
+                    else if (noiseValue < 0.4) tileId = 65; // ID für Grasland
+                    else if (noiseValue < 0.6) tileId = 145; // ID für Wald
+                    else if (noiseValue < 0.8) tileId = 6; // ID für Hügelland
+                    else tileId = 7; // ID für Berggipfel
 
-                //e.Tint = noiseValue > 0.1f ? Color.White : Color.Black;
-
-                if (noiseValue < -0.6) // Tiefer Ozean
-                {
-                    e.Tint = Color.MidnightBlue;
+                    _world.Set(x, y, tileId);
                 }
-                else if (noiseValue < -0.2) // Flacher Ozean
-                {
-                    e.Tint = Color.DodgerBlue;
-                }
-                else if (noiseValue < 0) // Küstenbereich
-                {
-                    e.Tint = Color.LightSkyBlue;
-                }
-                else if (noiseValue < 0.2) // Strand
-                {
-                    e.Tint = Color.LightGoldenrodYellow;
-                }
-                else if (noiseValue < 0.4) // Grasland
-                {
-                    e.Tint = Color.LawnGreen;
-                }
-                else if (noiseValue < 0.6) // Wald
-                {
-                    e.Tint = Color.ForestGreen;
-                }
-                else if (noiseValue < 0.8) // Hügelland
-                {
-                    e.Tint = Color.SaddleBrown;
-                }
-                else // Berggipfel
-                {
-                    e.Tint = Color.LightGray;
-                }
-
-                //e.Tint = Color.White * noiseValue;
             }
-
-            base.Update(gameTime);
         }
 
         public override void Draw(QCRenderContext context, GameTime gameTime)
         {
             _entities.ForEach(e => e.Draw(context, gameTime));
+            WorldRenderer.Instance.Draw(context, gameTime, _world, _tileSet);
+
             base.Draw(context, gameTime);
         }
     }

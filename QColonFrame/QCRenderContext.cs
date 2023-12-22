@@ -11,6 +11,7 @@ namespace QColonFrame
     {
 
         public SpriteBatch SpriteBatch;
+        public QCCamera Camera;
 
     }
 }

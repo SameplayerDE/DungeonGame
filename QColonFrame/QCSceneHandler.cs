@@ -137,7 +137,7 @@ namespace QColonFrame
             if (Current == null)
                 return;
 
-            RenderContext.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
+            RenderContext.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: RenderContext.Camera.GetViewMatrix());
             Current.Draw(RenderContext, gameTime);
             RenderContext.SpriteBatch.End();
 

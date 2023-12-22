@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using QColonFrame;
+using System;
 
 namespace Client
 {
@@ -12,8 +13,12 @@ namespace Client
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+
         private QCRenderContext _context;
+        private QCCamera _camera;
         private DungeonEntity _player;
+        private World _world;
+        private Texture2D _tileSet;
 
         public Game1()
         {
@@ -25,6 +30,8 @@ namespace Client
 
         protected override void Initialize()
         {
+
+            _camera = new QCCamera(GraphicsDevice.Viewport);
             _player = new DungeonEntity();
             _player.Flags = DungeonEntityFlags.Drawable;
 
@@ -43,9 +50,9 @@ namespace Client
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _context.SpriteBatch = _spriteBatch;
+            _context.Camera = _camera;
 
             _player.Texture = Content.Load<Texture2D>("missing");
-
         }
 
         protected override void Update(GameTime gameTime)
@@ -53,6 +60,7 @@ namespace Client
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            _camera.Update(gameTime);
             QCSceneHandler.Instance.Update(gameTime);
 
             base.Update(gameTime);
@@ -60,14 +68,6 @@ namespace Client
 
         protected override void Draw(GameTime gameTime)
         {
-            //GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            //_spriteBatch.Begin();
-
-            //_player.Draw(_context, gameTime);
-
-            //_spriteBatch.End();
-
             //GraphicsDevice.SetRenderTarget(_renderTarget);
             GraphicsDevice.Clear(Color.Black);
             QCSceneHandler.Instance.Draw(gameTime);

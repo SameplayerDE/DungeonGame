@@ -9,8 +9,16 @@ namespace DungeonFrame
     public class World
     {
 
+        public int Width, Height;
         public int X, Y;
         public int[,] Tiles;
+
+        public World(int width, int height)
+        {
+            Width = width;
+            Height = height;
+            Tiles = new int[Width, Height];
+        }
 
         public int Get(int x, int y)
         {
