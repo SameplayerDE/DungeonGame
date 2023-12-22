@@ -41,7 +41,7 @@ namespace Client.Scenes
                 }
             }
 
-            _world = new World(100, 100);
+            _world = new World(100, 100, TileAtlas.LoadTilesFromJson(""));
             for (int y = 0; y < 100; y++)
             {
                 for (int x = 0; x < 100; x++)
@@ -85,12 +85,12 @@ namespace Client.Scenes
                         (float)gameTime.TotalGameTime.TotalSeconds * 10);
 
                     int tileId;
-                    if (noiseValue < -0.6) tileId = 7; // ID für Tiefer Ozean
-                    else if (noiseValue < -0.2) tileId = 48; // ID für Flacher Ozean
-                    else if (noiseValue < 0) tileId = 49; // ID für Küstenbereich
-                    else if (noiseValue < 0.2) tileId = 50; // ID für Strand
-                    else if (noiseValue < 0.4) tileId = 65; // ID für Grasland
-                    else if (noiseValue < 0.6) tileId = 145; // ID für Wald
+                    if (noiseValue < -0.6) tileId = 0; // ID für Tiefer Ozean
+                    else if (noiseValue < -0.2) tileId = 1; // ID für Flacher Ozean
+                    else if (noiseValue < 0) tileId = 2; // ID für Küstenbereich
+                    else if (noiseValue < 0.2) tileId = 3; // ID für Strand
+                    else if (noiseValue < 0.4) tileId = 4; // ID für Grasland
+                    else if (noiseValue < 0.6) tileId = 5; // ID für Wald
                     else if (noiseValue < 0.8) tileId = 6; // ID für Hügelland
                     else tileId = 7; // ID für Berggipfel
 
