@@ -105,7 +105,7 @@ namespace Client.Scenes
             float previousScrollValue = currentScrollValue; // Du musst den vorherigen Scroll-Wert speichern
             currentScrollValue = Mouse.GetState().ScrollWheelValue;
             float zoomSpeed = 0.001f; // Geschwindigkeit des Zooms, kannst du anpassen
-            QCSceneHandler.Instance.RenderContext.Camera.Zoom += (currentScrollValue - previousScrollValue) * zoomSpeed;
+            ((Camera)QCSceneHandler.Instance.RenderContext.Camera).Zoom += (currentScrollValue - previousScrollValue) * zoomSpeed;
             //QCSceneHandler.Instance.RenderContext.Camera.Rotation += (currentScrollValue - previousScrollValue) * zoomSpeed;
 
             Vector2 cameraMove = Vector2.Zero;

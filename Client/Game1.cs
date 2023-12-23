@@ -16,7 +16,7 @@ namespace Client
 
 
         private QCRenderContext _context;
-        private QCCamera _camera;
+        private Camera _camera;
         private DungeonEntity _player;
         private World _world;
         private Texture2D _tileSet;
@@ -34,7 +34,7 @@ namespace Client
         protected override void Initialize()
         {
 
-            _camera = new QCCamera(GraphicsDevice.Viewport);
+            _camera = new Camera(GraphicsDevice.Viewport);
             _player = new DungeonEntity();
             _player.Flags = DungeonEntityFlags.Drawable;
 
