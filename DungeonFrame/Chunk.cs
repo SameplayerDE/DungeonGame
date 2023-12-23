@@ -9,8 +9,8 @@ namespace DungeonFrame
 {
     public class Chunk
     {
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public static int Width { get; set; } = 16;
+        public static int Height { get; set; } = 16;
         public int X { get; set; }
         public int Y { get; set; }
         [JsonIgnore]
@@ -23,13 +23,11 @@ namespace DungeonFrame
             set => Tiles = UnflattenArray(value, Width, Height);
         }
 
-        public Chunk(int x, int y, int width, int height)
+        public Chunk(int x, int y)
         {
             X = x;
             Y = y;
-            Width = width;
-            Height = height;
-            Tiles = new int[width, height];
+            Tiles = new int[Width, Height];
         }
 
         // Wandelt ein 2D-Array in ein 1D-Array um

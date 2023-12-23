@@ -13,6 +13,10 @@ namespace DungeonFrame
 
         private WorldRenderer() { }
 
+        public enum RenderingStyle { Isometric, Orthogonal }
+        public RenderingStyle CurrentStyle { get; set; } = RenderingStyle.Orthogonal;
+
+
         public void Draw(QCRenderContext context, GameTime gameTime, World world, Texture2D tileSet)
         {
             RenderCalls = 0;
@@ -30,20 +34,32 @@ namespace DungeonFrame
             {
                 var chunk = chunkEntry.Value;
                 // Berechne globale Position des Chunks
-                int chunkGlobalX = chunk.X * world.ChunkSize;
-                int chunkGlobalY = chunk.Y * world.ChunkSize;
+                int chunkGlobalX = chunk.X * Chunk.Width;
+                int chunkGlobalY = chunk.Y * Chunk.Height;
 
-                for (int localY = 0; localY < chunk.Height; localY++)
+                for (int localY = 0; localY < Chunk.Height; localY++)
                 {
-                    for (int localX = 0; localX < chunk.Width; localX++)
+                    for (int localX = 0; localX < Chunk.Width; localX++)
                     {
                         // Globale Tile-Position
                         int globalX = chunkGlobalX + localX;
                         int globalY = chunkGlobalY + localY;
 
+                        int isoX, isoY;
+                        if (CurrentStyle == RenderingStyle.Isometric)
+                        {
+                            isoX = (globalX - globalY) * (tileWidth / 2);
+                            isoY = (globalX + globalY) * (tileHeight / 2);
+                        }
+                        else // Orthogonal
+                        {
+                            isoX = globalX * tileWidth;
+                            isoY = globalY * tileHeight;
+                        }
+
                         // Isometrische Positionierung
-                        int isoX = (globalX - globalY) * (tileWidth / 2);
-                        int isoY = (globalX + globalY) * (tileHeight / 2);
+                        //int isoX = (globalX - globalY) * (tileWidth / 2);
+                        //int isoY = (globalX + globalY) * (tileHeight / 2);
 
                         // Prüfen, ob das Tile im sichtbaren Bereich liegt
                         if (isoX > topLeft.X - tileWidth && isoX < bottomRight.X && isoY > topLeft.Y - tileHeight && isoY < bottomRight.Y)

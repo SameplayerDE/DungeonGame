@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using QColonFrame;
+using QColonFrame.Input;
 using System;
 using System.Collections.Generic;
 
@@ -11,12 +12,14 @@ namespace Client.Scenes
     internal class DummyScene : QCScene
     {
         private List<DungeonEntity> _entities;
+        private DungeonEntity _player;
         private FastNoiseLite _noise;
         private World _world;
         private Texture2D _tileSet;
         private float _noiseOffsetX = 0f;
         private float _noiseOffsetY = 0f;
         private float currentScrollValue = 0f;
+        private QCInputActionHandler _inputActionHandler;
 
         public DummyScene(Game game) : base("dummy", game)
         {
@@ -24,6 +27,10 @@ namespace Client.Scenes
 
         public override void Initialize()
         {
+
+            _inputActionHandler = new QCInputActionHandler();
+            _inputActionHandler.AddAction(new QCInputAction("exit_game").AddKey(Keys.Left, Keys.A).SetHoldAction(ClientCore.Exit));
+
             _noise = new FastNoiseLite();
             _noise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
             _noise.SetSeed(10111999);
@@ -31,6 +38,10 @@ namespace Client.Scenes
             float scale = 4;
 
             _entities = new List<DungeonEntity>();
+            _player = new DungeonEntity();
+            _player.Tint = Color.Red;
+            _player.Flags = DungeonEntityFlags.Drawable;
+            _player.Position = new Vector2(0, 0);
 
             for (float y = 0; y <= Game.Window.ClientBounds.Height / scale; y += 1)
             {
@@ -44,7 +55,8 @@ namespace Client.Scenes
             }
 
             TileAtlas tileAtlas = TileAtlas.LoadTilesFromJson("Assets/dummy.json");
-            _world = WorldInitializer.CreateWorldWithChunks(tileAtlas);
+            _world = new World(tileAtlas);
+            _world.LoadChunk(0, 0);
 
             base.Initialize();
         }
@@ -53,12 +65,14 @@ namespace Client.Scenes
         {
             var texture = Content.Load<Texture2D>("missing");
             _entities.ForEach(e => e.Texture = texture);
+            _player.Texture = texture;
             _tileSet = Content.Load<Texture2D>("tileset");
             base.LoadContent();
         }
 
         public override void Update(GameTime gameTime)
         {
+            _inputActionHandler.Update(gameTime, ClientCore.Input);
             //float noiseScale = 4;
             //
             //_noiseOffsetX += 0.1f; // Geschwindigkeit der Rauschbewegung in X
@@ -92,7 +106,7 @@ namespace Client.Scenes
             currentScrollValue = Mouse.GetState().ScrollWheelValue;
             float zoomSpeed = 0.001f; // Geschwindigkeit des Zooms, kannst du anpassen
             QCSceneHandler.Instance.RenderContext.Camera.Zoom += (currentScrollValue - previousScrollValue) * zoomSpeed;
-
+            //QCSceneHandler.Instance.RenderContext.Camera.Rotation += (currentScrollValue - previousScrollValue) * zoomSpeed;
 
             Vector2 cameraMove = Vector2.Zero;
             float moveSpeed = 5f; // Bewegungsgeschwindigkeit, kannst du anpassen
@@ -106,15 +120,39 @@ namespace Client.Scenes
             if (Keyboard.GetState().IsKeyDown(Keys.Right))
                 cameraMove.X += moveSpeed;
 
-            QCSceneHandler.Instance.RenderContext.Camera.Position += cameraMove;
+            _player.Position += cameraMove;
 
+            //QCSceneHandler.Instance.RenderContext.Camera.Position = _player.Position;
+
+            int chunkX = (int)(_player.Position.X / (Chunk.Width * 64));
+            int chunkY = (int)(_player.Position.Y / (Chunk.Height * 32));
+
+            Console.WriteLine(_player.Position.X);
+            Console.WriteLine(_player.Position.Y);
+            Console.WriteLine(chunkX);
+            Console.WriteLine(chunkY);
+            Console.WriteLine("------");
+
+            //Unload all other
+
+           foreach(var chunk in _world.Chunks)
+            {
+                _world.UnloadChunk(chunk.Value.X, chunk.Value.Y);
+            }
+
+            _world.LoadChunk(chunkX, chunkY);
+            _world.LoadChunk(chunkX + 1, chunkY);
+            _world.LoadChunk(chunkX - 1, chunkY);
+            _world.LoadChunk(chunkX, chunkY + 1);
+            _world.LoadChunk(chunkX, chunkY - 1);
 
         }
 
         public override void Draw(QCRenderContext context, GameTime gameTime)
         {
-            _entities.ForEach(e => e.Draw(context, gameTime));
+            //_entities.ForEach(e => e.Draw(context, gameTime));
             WorldRenderer.Instance.Draw(context, gameTime, _world, _tileSet);
+            _player.Draw(context, gameTime);
 
             base.Draw(context, gameTime);
         }

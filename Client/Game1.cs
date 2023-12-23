@@ -14,6 +14,7 @@ namespace Client
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+
         private QCRenderContext _context;
         private QCCamera _camera;
         private DungeonEntity _player;
@@ -26,6 +27,8 @@ namespace Client
             _context = new QCRenderContext();
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+
+            ClientCore.SetGame(this);
         }
 
         protected override void Initialize()
@@ -57,6 +60,8 @@ namespace Client
 
         protected override void Update(GameTime gameTime)
         {
+            ClientCore.Update(gameTime);
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 

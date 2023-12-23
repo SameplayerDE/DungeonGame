@@ -21,7 +21,7 @@ namespace QColonFrame
             _viewport = viewport;
             Zoom = 1f;
             Rotation = 0f;
-            Position = Vector2.Zero;
+            Position = Vector2.Zero + new Vector2(viewport.Width / 2f, viewport.Height / 2f);
         }
 
         public void Update(GameTime gameTime)
@@ -29,6 +29,8 @@ namespace QColonFrame
             // Hier können Animations-Updates oder glatte Übergänge implementiert werden.
 
             Zoom = Math.Clamp(Zoom, 0.05f, 100f);
+
+
 
             if (Limits.HasValue)
             {
@@ -65,7 +67,7 @@ namespace QColonFrame
                 Matrix.CreateTranslation(new Vector3(-Position * parallax, 0.0f)) *
                 Matrix.CreateTranslation(new Vector3(-_viewport.Width * 0.5f, -_viewport.Height * 0.5f, 0.0f)) *
                 Matrix.CreateRotationZ(Rotation) *
-                Matrix.CreateScale(Zoom, Zoom, 1) *
+                Matrix.CreateScale(Zoom, Zoom, 1) * 
                 Matrix.CreateTranslation(new Vector3(_viewport.Width * 0.5f, _viewport.Height * 0.5f, 0.0f));
         }
 

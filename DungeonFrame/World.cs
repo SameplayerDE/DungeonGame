@@ -9,7 +9,6 @@ namespace DungeonFrame
     {
         private TileAtlas _tileAtlas;
         public Dictionary<(int, int), Chunk> Chunks;
-        public int ChunkSize;
 
         private static string WorldDataPath = "WorldData";
 
@@ -26,19 +25,18 @@ namespace DungeonFrame
             EnsureWorldDataFolderExists();
         }
 
-        public World(int chunkSize, TileAtlas tileAtlas)
+        public World(TileAtlas tileAtlas)
         {
             _tileAtlas = tileAtlas;
             Chunks = new Dictionary<(int, int), Chunk>();
-            ChunkSize = chunkSize;
         }
 
         public Tile GetTile(int x, int y)
         {
-            int chunkX = x / ChunkSize;
-            int chunkY = y / ChunkSize;
-            int localX = x % ChunkSize;
-            int localY = y % ChunkSize;
+            int chunkX = x / Chunk.Width;
+            int chunkY = y / Chunk.Height;
+            int localX = x % Chunk.Width;
+            int localY = y % Chunk.Height;
 
             var chunkKey = (chunkX, chunkY);
             if (!Chunks.ContainsKey(chunkKey))
@@ -57,10 +55,10 @@ namespace DungeonFrame
 
         public void SetTile(int x, int y, int tileId)
         {
-            int chunkX = x / ChunkSize;
-            int chunkY = y / ChunkSize;
-            int localX = x % ChunkSize;
-            int localY = y % ChunkSize;
+            int chunkX = x / Chunk.Width;
+            int chunkY = y / Chunk.Height;
+            int localX = x % Chunk.Width;
+            int localY = y % Chunk.Height;
 
             var chunkKey = (chunkX, chunkY);
             if (!Chunks.ContainsKey(chunkKey))
@@ -82,7 +80,7 @@ namespace DungeonFrame
             }
             else
             {
-                Chunks[(x, y)] = new Chunk(x, y, ChunkSize, ChunkSize);
+                Chunks[(x, y)] = new Chunk(x, y);
             }
         }
 

@@ -9,13 +9,12 @@ namespace Client
 {
     public class WorldInitializer
     {
-        private const int ChunkSize = 16; // Größe eines Chunks (16x16 Tiles)
         private const int NumberOfChunks = 5; // Anzahl der Chunks in jeder Richtung (x und y)
         private const int DefaultTileId = 1; // Standard-Tile-ID, die für die Initialisierung verwendet wird
 
         public static World CreateWorldWithChunks(TileAtlas tileAtlas)
         {
-            World world = new World(ChunkSize, tileAtlas);
+            World world = new World(tileAtlas);
 
             // Erstelle und initialisiere Chunks
             for (int chunkX = 0; chunkX < NumberOfChunks; chunkX++)
@@ -31,12 +30,12 @@ namespace Client
 
         private static void CreateAndInitializeChunk(World world, int chunkX, int chunkY)
         {
-            Chunk chunk = new Chunk(chunkX, chunkY, ChunkSize, ChunkSize);
+            Chunk chunk = new Chunk(chunkX, chunkY);
 
             // Initialisiere alle Tiles im Chunk mit der DefaultTileId
-            for (int x = 0; x < ChunkSize; x++)
+            for (int x = 0; x < Chunk.Width; x++)
             {
-                for (int y = 0; y < ChunkSize; y++)
+                for (int y = 0; y < Chunk.Height; y++)
                 {
                     chunk.Tiles[x, y] = DefaultTileId;
                 }
