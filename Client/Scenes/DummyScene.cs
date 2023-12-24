@@ -115,7 +115,7 @@ namespace Client.Scenes
             if (Keyboard.GetState().IsKeyDown(Keys.Up))
                 cameraMove.Y -= moveSpeed;
             if (Keyboard.GetState().IsKeyDown(Keys.Down))
-                cameraMove.Y += moveSpeed;
+                cameraMove.Y += moveSpeed;      
             if (Keyboard.GetState().IsKeyDown(Keys.Left))
                 cameraMove.X -= moveSpeed;
             if (Keyboard.GetState().IsKeyDown(Keys.Right))
