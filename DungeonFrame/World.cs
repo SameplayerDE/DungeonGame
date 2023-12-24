@@ -15,7 +15,7 @@ namespace DungeonFrame
 
         //DEMO
         public int Seed = 101199;
-        public float NoiseScale = 5f;
+        public float NoiseScale = 0.5f;
         public FastNoiseLite NoiseGenerator;
         //DEMO
 
@@ -44,6 +44,7 @@ namespace DungeonFrame
         public World(TileAtlas tileAtlas)
         {
             NoiseGenerator = new FastNoiseLite(Seed);
+            NoiseGenerator.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S);
             _tileAtlas = tileAtlas;
             Chunks = new ConcurrentDictionary<(int, int), Chunk>();
         }
