@@ -11,7 +11,7 @@ namespace DungeonFrame
 {
     public class Camera : QCCamera
     {
-        private readonly Viewport _viewport;
+        public readonly Viewport Viewport;
         public Vector2 Position { get; set; }
         public float Zoom { get; set; }
         public float Rotation { get; set; }
@@ -19,7 +19,7 @@ namespace DungeonFrame
 
         public Camera(Viewport viewport)
         {
-            _viewport = viewport;
+            Viewport = viewport;
             Zoom = 1f;
             Rotation = 0f;
             Position = Vector2.Zero + new Vector2(viewport.Width / 2f, viewport.Height / 2f);
@@ -37,7 +37,7 @@ namespace DungeonFrame
             {
                 AdjustZoomWithinLimits();
                 var cameraWorldMin = Vector2.Transform(Vector2.Zero, Matrix.Invert(GetViewMatrix()));
-                var cameraSize = new Vector2(_viewport.Width / Zoom, _viewport.Height / Zoom);
+                var cameraSize = new Vector2(Viewport.Width / Zoom, Viewport.Height / Zoom);
                 var limitWorldMin = new Vector2(Limits.Value.Left, Limits.Value.Top);
                 var limitWorldMax = new Vector2(Limits.Value.Right, Limits.Value.Bottom);
                 var positionOffset = Position - cameraWorldMin;
@@ -47,18 +47,18 @@ namespace DungeonFrame
 
         private void AdjustZoomWithinLimits()
         {
-            var cameraWorldSize = new Vector2(_viewport.Width / Zoom, _viewport.Height / Zoom);
+            var cameraWorldSize = new Vector2(Viewport.Width / Zoom, Viewport.Height / Zoom);
             var worldSize = new Vector2(Limits.Value.Width, Limits.Value.Height);
 
             // Stelle sicher, dass der gezoomte Bereich nicht größer als die Welt ist
             if (cameraWorldSize.X > worldSize.X)
             {
-                Zoom = _viewport.Width / worldSize.X;
+                Zoom = Viewport.Width / worldSize.X;
             }
 
             if (cameraWorldSize.Y > worldSize.Y)
             {
-                Zoom = _viewport.Height / worldSize.Y;
+                Zoom = Viewport.Height / worldSize.Y;
             }
         }
 
@@ -66,10 +66,10 @@ namespace DungeonFrame
         {
             return
                 Matrix.CreateTranslation(new Vector3(-Position * parallax, 0.0f)) *
-                Matrix.CreateTranslation(new Vector3(-_viewport.Width * 0.5f, -_viewport.Height * 0.5f, 0.0f)) *
+                Matrix.CreateTranslation(new Vector3(-Viewport.Width * 0.5f, -Viewport.Height * 0.5f, 0.0f)) *
                 Matrix.CreateRotationZ(Rotation) *
                 Matrix.CreateScale(Zoom, Zoom, 1) *
-                Matrix.CreateTranslation(new Vector3(_viewport.Width * 0.5f, _viewport.Height * 0.5f, 0.0f));
+                Matrix.CreateTranslation(new Vector3(Viewport.Width * 0.5f, Viewport.Height * 0.5f, 0.0f));
         }
 
         public override Matrix GetViewMatrix()

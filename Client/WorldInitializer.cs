@@ -31,13 +31,33 @@ namespace Client
         private static void CreateAndInitializeChunk(World world, int chunkX, int chunkY)
         {
             Chunk chunk = new Chunk(chunkX, chunkY);
+            FastNoiseLite noise = new FastNoiseLite();
 
             // Initialisiere alle Tiles im Chunk mit der DefaultTileId
             for (int x = 0; x < Chunk.Width; x++)
             {
                 for (int y = 0; y < Chunk.Height; y++)
                 {
-                    chunk.Tiles[x, y] = DefaultTileId;
+                    var noiseValue = noise.GetNoise(Chunk.Width * chunkX + x, Chunk.Height * chunkY + y);
+                    var tile = DefaultTileId;
+                    // Je nach Noise-Wert das passende Tile setzen
+                    if (noiseValue >= 0.75f)
+                    {
+                        tile = 0; // Wasser
+                    }
+                    else if (noiseValue >= 0.5f)
+                    {
+                        tile = 1; // Gras
+                    }
+                    else if (noiseValue >= 0.25f)
+                    {
+                        tile = 2; // Erde
+                    }
+                    else
+                    {
+                        tile = 3; // Stein
+                    }
+                    chunk.Tiles[x, y] = tile;
                 }
             }
 

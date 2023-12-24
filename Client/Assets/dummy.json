@@ -6,37 +6,17 @@
   },
   {
     "Id": 1,
-    "Depth": 32,
+    "Depth": 0,
     "IsWalkable": false
   },
   {
     "Id": 2,
-    "Depth": 32,
+    "Depth": 0,
     "IsWalkable": true
   },
   {
     "Id": 3,
-    "Depth": 32,
+    "Depth": 0,
     "IsWalkable": false
-  },
-  {
-    "Id": 4,
-    "Depth": 32,
-    "IsWalkable": true
-  },
-  {
-    "Id": 5,
-    "Depth": 32,
-    "IsWalkable": true
-  },
-  {
-    "Id": 6,
-    "Depth": 32,
-    "IsWalkable": true
-  },
-  {
-    "Id": 7,
-    "Depth": 32,
-    "IsWalkable": true
   }
 ]

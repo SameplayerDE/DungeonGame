@@ -56,7 +56,6 @@ namespace Client.Scenes
 
             TileAtlas tileAtlas = TileAtlas.LoadTilesFromJson("Assets/dummy.json");
             _world = new World(tileAtlas);
-            _world.LoadChunk(0, 0);
 
             base.Initialize();
         }
@@ -122,7 +121,7 @@ namespace Client.Scenes
 
             _player.Position += cameraMove;
 
-            //QCSceneHandler.Instance.RenderContext.Camera.Position = _player.Position;
+            ((Camera)QCSceneHandler.Instance.RenderContext.Camera).Position = _player.Position - ((Camera)QCSceneHandler.Instance.RenderContext.Camera).Viewport.Bounds.Center.ToVector2();
 
             int chunkX = (int)(_player.Position.X / (Chunk.Width * 64));
             int chunkY = (int)(_player.Position.Y / (Chunk.Height * 32));
@@ -142,10 +141,13 @@ namespace Client.Scenes
 
             _world.LoadChunk(chunkX, chunkY);
             _world.LoadChunk(chunkX + 1, chunkY);
+            _world.LoadChunk(chunkX + 1, chunkY + 1);
+            _world.LoadChunk(chunkX + 1, chunkY - 1);
             _world.LoadChunk(chunkX - 1, chunkY);
+            _world.LoadChunk(chunkX - 1, chunkY + 1);
+            _world.LoadChunk(chunkX - 1, chunkY - 1);
             _world.LoadChunk(chunkX, chunkY + 1);
             _world.LoadChunk(chunkX, chunkY - 1);
-
         }
 
         public override void Draw(QCRenderContext context, GameTime gameTime)

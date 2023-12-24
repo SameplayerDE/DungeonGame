@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -9,6 +10,11 @@ namespace DungeonFrame
     {
         private TileAtlas _tileAtlas;
         public Dictionary<(int, int), Chunk> Chunks;
+
+        //DEMO
+        public int Seed = 101199;
+        public FastNoiseLite NoiseGenerator;
+        //DEMO
 
         private static string WorldDataPath = "WorldData";
 
@@ -27,6 +33,7 @@ namespace DungeonFrame
 
         public World(TileAtlas tileAtlas)
         {
+            NoiseGenerator = new FastNoiseLite(Seed);
             _tileAtlas = tileAtlas;
             Chunks = new Dictionary<(int, int), Chunk>();
         }
@@ -81,6 +88,38 @@ namespace DungeonFrame
             else
             {
                 Chunks[(x, y)] = new Chunk(x, y);
+                PopulateCunk(Chunks[(x, y)]);
+            }
+        }
+
+        private void PopulateCunk(Chunk chunk)
+        {
+            // Initialisiere alle Tiles im Chunk mit der DefaultTileId
+            for (int x = 0; x < Chunk.Width; x++)
+            {
+                for (int y = 0; y < Chunk.Height; y++)
+                {
+                    var noiseValue = NoiseGenerator.GetNoise(Chunk.Width * chunk.X + x, Chunk.Height * chunk.Y + y);
+                    var tile = 0;
+                    // Je nach Noise-Wert das passende Tile setzen
+                    if (noiseValue >= 0.75f)
+                    {
+                        tile = 0; // Wasser
+                    }
+                    else if (noiseValue >= 0.5f)
+                    {
+                        tile = 1; // Gras
+                    }
+                    else if (noiseValue >= 0.25f)
+                    {
+                        tile = 2; // Erde
+                    }
+                    else
+                    {
+                        tile = 3; // Stein
+                    }
+                    chunk.Tiles[x, y] = tile;
+                }
             }
         }
 
