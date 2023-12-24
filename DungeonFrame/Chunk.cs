@@ -14,6 +14,8 @@ namespace DungeonFrame
         public int X { get; set; }
         public int Y { get; set; }
         [JsonIgnore]
+        public bool IsLoaded = false;
+        [JsonIgnore]
         public int[,] Tiles { get; private set; }
 
         // Eindimensionales Array für die Serialisierung

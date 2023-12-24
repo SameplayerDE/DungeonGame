@@ -6,6 +6,8 @@ using QColonFrame;
 using QColonFrame.Input;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Client.Scenes
 {
@@ -123,8 +125,9 @@ namespace Client.Scenes
 
             ((Camera)QCSceneHandler.Instance.RenderContext.Camera).Position = _player.Position - ((Camera)QCSceneHandler.Instance.RenderContext.Camera).Viewport.Bounds.Center.ToVector2();
 
-            int chunkX = (int)(_player.Position.X / (Chunk.Width * 64));
-            int chunkY = (int)(_player.Position.Y / (Chunk.Height * 32));
+            int chunkX = (int)Math.Floor(_player.Position.X / (Chunk.Width * 64));
+            int chunkY = (int)Math.Floor(_player.Position.Y / (Chunk.Height * 32));
+
 
             Console.WriteLine(_player.Position.X);
             Console.WriteLine(_player.Position.Y);
@@ -134,20 +137,24 @@ namespace Client.Scenes
 
             //Unload all other
 
-           foreach(var chunk in _world.Chunks)
+            foreach (var chunkKey in _world.Chunks.Keys.ToList())
             {
-                _world.UnloadChunk(chunk.Value.X, chunk.Value.Y);
+                if (Math.Abs(chunkKey.Item1 - chunkX) > 1 || Math.Abs(chunkKey.Item2 - chunkY) > 1)
+                {
+                    _world.UnloadChunkAsync(chunkKey.Item1, chunkKey.Item2);
+                }
             }
 
-            _world.LoadChunk(chunkX, chunkY);
-            _world.LoadChunk(chunkX + 1, chunkY);
-            _world.LoadChunk(chunkX + 1, chunkY + 1);
-            _world.LoadChunk(chunkX + 1, chunkY - 1);
-            _world.LoadChunk(chunkX - 1, chunkY);
-            _world.LoadChunk(chunkX - 1, chunkY + 1);
-            _world.LoadChunk(chunkX - 1, chunkY - 1);
-            _world.LoadChunk(chunkX, chunkY + 1);
-            _world.LoadChunk(chunkX, chunkY - 1);
+            for (int i = chunkX - 1; i <= chunkX + 1; i++)
+            {
+                for (int j = chunkY - 1; j <= chunkY + 1; j++)
+                {
+                    if (!_world.Chunks.ContainsKey((i, j)))
+                    {
+                        _world.LoadChunkAsync(i, j);
+                    }
+                }
+            }
         }
 
         public override void Draw(QCRenderContext context, GameTime gameTime)

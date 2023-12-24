@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 
 namespace DungeonFrame
@@ -9,10 +11,11 @@ namespace DungeonFrame
     public class World
     {
         private TileAtlas _tileAtlas;
-        public Dictionary<(int, int), Chunk> Chunks;
+        public ConcurrentDictionary<(int, int), Chunk> Chunks;
 
         //DEMO
         public int Seed = 101199;
+        public float NoiseScale = 5f;
         public FastNoiseLite NoiseGenerator;
         //DEMO
 
@@ -28,6 +31,13 @@ namespace DungeonFrame
 
         static World()
         {
+            //DEBUG
+            if (Directory.Exists(WorldDataPath))
+            {
+                Directory.Delete(WorldDataPath, true);
+            }
+            //DEBUG
+
             EnsureWorldDataFolderExists();
         }
 
@@ -35,7 +45,7 @@ namespace DungeonFrame
         {
             NoiseGenerator = new FastNoiseLite(Seed);
             _tileAtlas = tileAtlas;
-            Chunks = new Dictionary<(int, int), Chunk>();
+            Chunks = new ConcurrentDictionary<(int, int), Chunk>();
         }
 
         public Tile GetTile(int x, int y)
@@ -48,7 +58,7 @@ namespace DungeonFrame
             var chunkKey = (chunkX, chunkY);
             if (!Chunks.ContainsKey(chunkKey))
             {
-                LoadChunk(chunkX, chunkY);
+               LoadChunk(chunkX, chunkY);
             }
 
             int id = Chunks[chunkKey].Tiles[localX, localY];
@@ -76,20 +86,31 @@ namespace DungeonFrame
             Chunks[chunkKey].Tiles[localX, localY] = tileId;
         }
 
+        public async Task LoadChunkAsync(int x, int y)
+        {
+            await Task.Run(() =>
+            {
+                LoadChunk(x, y);
+            });
+        }
+
         public void LoadChunk(int x, int y)
         {
             string filePath = GetChunkFilePath(x, y);
+            Chunk chunk;
             if (File.Exists(filePath))
             {
                 string json = File.ReadAllText(filePath);
-                Chunk chunk = JsonSerializer.Deserialize<Chunk>(json);
-                Chunks[(x, y)] = chunk;
+                chunk = JsonSerializer.Deserialize<Chunk>(json);
+                
             }
             else
             {
-                Chunks[(x, y)] = new Chunk(x, y);
-                PopulateCunk(Chunks[(x, y)]);
+                chunk = new Chunk(x, y);
+                PopulateCunk(chunk);
             }
+            Chunks[(x, y)] = chunk;
+            chunk.IsLoaded = true;
         }
 
         private void PopulateCunk(Chunk chunk)
@@ -99,7 +120,7 @@ namespace DungeonFrame
             {
                 for (int y = 0; y < Chunk.Height; y++)
                 {
-                    var noiseValue = NoiseGenerator.GetNoise(Chunk.Width * chunk.X + x, Chunk.Height * chunk.Y + y);
+                    var noiseValue = NoiseGenerator.GetNoise((Chunk.Width * chunk.X + x) * NoiseScale, (Chunk.Height * chunk.Y + y) * NoiseScale);
                     var tile = 0;
                     // Je nach Noise-Wert das passende Tile setzen
                     if (noiseValue >= 0.75f)
@@ -123,14 +144,31 @@ namespace DungeonFrame
             }
         }
 
+        public async Task SaveChunkAsync(int x, int y)
+        {
+            await Task.Run(() =>
+            {
+                SaveChunk(x, y);
+            });
+        }
+
         public void SaveChunk(int x, int y)
         {
             if (Chunks.ContainsKey((x, y)))
             {
+                Chunks[(x, y)].IsLoaded = false;
                 string json = JsonSerializer.Serialize(Chunks[(x, y)]);
                 string filePath = GetChunkFilePath(x, y);
                 File.WriteAllText(filePath, json);
             }
+        }
+
+        public async Task SaveChunkAsync(int x, int y, Chunk chunk)
+        {
+            await Task.Run(() =>
+            {
+                SaveChunk(x, y, chunk);
+            });
         }
 
         public void SaveChunk(int x, int y, Chunk chunk)
@@ -140,10 +178,22 @@ namespace DungeonFrame
             File.WriteAllText(filePath, json);
         }
 
+        public async Task UnloadChunkAsync(int x, int y)
+        {
+            await Task.Run(() =>
+            {
+                UnloadChunk(x, y);
+            });
+        }
+
         public void UnloadChunk(int x, int y)
         {
-            SaveChunk(x, y);
-            Chunks.Remove((x, y));
+            (int x, int y) chunkKey = (x, y);
+
+            if (Chunks.TryRemove(chunkKey, out _))
+            {
+                SaveChunkAsync(x, y);
+            }
         }
 
         private string GetChunkFilePath(int x, int y)

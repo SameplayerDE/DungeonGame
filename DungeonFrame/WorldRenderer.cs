@@ -30,7 +30,7 @@ namespace DungeonFrame
             var bottomRight = Vector2.Transform(new Vector2(context.SpriteBatch.GraphicsDevice.Viewport.Width, context.SpriteBatch.GraphicsDevice.Viewport.Height), inverseViewMatrix);
 
             // Durchlaufe alle Chunks
-            foreach (var chunkEntry in world.Chunks)
+            foreach (var chunkEntry in world.Chunks.Where(c => c.Value.IsLoaded))
             {
                 var chunk = chunkEntry.Value;
                 // Berechne globale Position des Chunks
