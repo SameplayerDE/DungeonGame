@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using QColonFrame;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -15,8 +16,8 @@ namespace DungeonFrame
 
         //DEMO
         public int Seed = 101199;
-        public float NoiseScale = 0.5f;
-        public FastNoiseLite NoiseGenerator;
+        public float NoiseScale = 0.4f;
+        public QCTerrainGenerator NoiseGenerator;
         //DEMO
 
         private static string WorldDataPath = "WorldData";
@@ -43,8 +44,7 @@ namespace DungeonFrame
 
         public World(TileAtlas tileAtlas)
         {
-            NoiseGenerator = new FastNoiseLite(Seed);
-            NoiseGenerator.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S);
+            NoiseGenerator = new QCTerrainGenerator(Seed);
             _tileAtlas = tileAtlas;
             Chunks = new ConcurrentDictionary<(int, int), Chunk>();
         }
@@ -121,25 +121,27 @@ namespace DungeonFrame
             {
                 for (int y = 0; y < Chunk.Height; y++)
                 {
-                    var noiseValue = NoiseGenerator.GetNoise((Chunk.Width * chunk.X + x) * NoiseScale, (Chunk.Height * chunk.Y + y) * NoiseScale);
+                   // var noiseValue = NoiseGenerator.GetNoise((Chunk.Width * chunk.X + x) * NoiseScale, (Chunk.Height * chunk.Y + y) * NoiseScale, 10, 2, 0.5f) * -1;
+                    var noiseValue = NoiseGenerator.GetNoise((Chunk.Width * chunk.X + x), (Chunk.Height * chunk.Y + y), QCTerrainGenerator.TerrainType.MOUNTAIN);
                     var tile = 0;
                     // Je nach Noise-Wert das passende Tile setzen
                     if (noiseValue >= 0.75f)
                     {
-                        tile = 0; // Wasser
+                        tile = 3; // Stein
                     }
                     else if (noiseValue >= 0.5f)
                     {
-                        tile = 1; // Gras
+                        tile = 2; // ERDE
                     }
                     else if (noiseValue >= 0.25f)
                     {
-                        tile = 2; // Erde
+                        tile = 1; // GRAS
                     }
                     else
                     {
-                        tile = 3; // Stein
+                        tile = 0; // WASSER
                     }
+                    chunk.Tiles[x, y] = (int)(noiseValue * 100f);
                     chunk.Tiles[x, y] = tile;
                 }
             }

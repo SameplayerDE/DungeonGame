@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using QColonFrame;
 using System;
 
@@ -19,6 +20,16 @@ namespace DungeonFrame
 
         public void Draw(QCRenderContext context, GameTime gameTime, World world, Texture2D tileSet)
         {
+            if (Keyboard.GetState().IsKeyDown(Keys.Space) && Keyboard.GetState().IsKeyDown(Keys.LeftShift))
+            {
+                CurrentStyle = RenderingStyle.Orthogonal;
+            }
+            else if (Keyboard.GetState().IsKeyDown(Keys.Space))
+            {
+                CurrentStyle = RenderingStyle.Isometric;
+            }
+            
+
             RenderCalls = 0;
             int tileWidth = 64;
             int tileHeight = 32;
@@ -64,7 +75,13 @@ namespace DungeonFrame
                         // Prüfen, ob das Tile im sichtbaren Bereich liegt
                         if (isoX > topLeft.X - tileWidth && isoX < bottomRight.X && isoY > topLeft.Y - tileHeight && isoY < bottomRight.Y)
                         {
-                            int tileId = chunk.Tiles[localX, localY];
+                            int tileId = chunk.Tiles[localX, localY] + (CurrentStyle == RenderingStyle.Isometric ? 10 : 0);
+                            float alpha = 1;
+                            //DEMO
+                            //tileId = 0;
+                            //alpha = chunk.Tiles[localX, localY] / 100f;
+                            //demo
+
                             Tile tile = world.GetTileById(tileId);
                             if (tile != null)
                             {
@@ -79,7 +96,7 @@ namespace DungeonFrame
                                 isoY -= tileDepth;
 
                                 Rectangle destination = new Rectangle(isoX, isoY, tileWidth, tileHeight + tileDepth);
-                                context.SpriteBatch.Draw(tileSet, destination, source, Color.White);
+                                context.SpriteBatch.Draw(tileSet, destination, source, Color.White * alpha);
                                 RenderCalls++;
                             }
                         }

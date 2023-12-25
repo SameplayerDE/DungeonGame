@@ -18,5 +18,25 @@
     "Id": 3,
     "Depth": 0,
     "IsWalkable": false
+  },
+  {
+    "Id": 10,
+    "Depth": 0,
+    "IsWalkable": true
+  },
+  {
+    "Id": 11,
+    "Depth": 0,
+    "IsWalkable": false
+  },
+  {
+    "Id": 12,
+    "Depth": 0,
+    "IsWalkable": true
+  },
+  {
+    "Id": 13,
+    "Depth": 0,
+    "IsWalkable": false
   }
 ]

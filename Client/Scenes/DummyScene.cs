@@ -110,7 +110,7 @@ namespace Client.Scenes
             //QCSceneHandler.Instance.RenderContext.Camera.Rotation += (currentScrollValue - previousScrollValue) * zoomSpeed;
 
             Vector2 cameraMove = Vector2.Zero;
-            float moveSpeed = 5f; // Bewegungsgeschwindigkeit, kannst du anpassen
+            float moveSpeed = 20f; // Bewegungsgeschwindigkeit, kannst du anpassen
 
             if (Keyboard.GetState().IsKeyDown(Keys.Up))
                 cameraMove.Y -= moveSpeed;
@@ -137,17 +137,19 @@ namespace Client.Scenes
 
             //Unload all other
 
+            int distance = 10;
+
             foreach (var chunkKey in _world.Chunks.Keys.ToList())
             {
-                if (Math.Abs(chunkKey.Item1 - chunkX) > 1 || Math.Abs(chunkKey.Item2 - chunkY) > 1)
+                if (Math.Abs(chunkKey.Item1 - chunkX) > distance || Math.Abs(chunkKey.Item2 - chunkY) > distance)
                 {
                     _world.UnloadChunkAsync(chunkKey.Item1, chunkKey.Item2);
                 }
             }
 
-            for (int i = chunkX - 1; i <= chunkX + 1; i++)
+            for (int i = chunkX - distance; i <= chunkX + distance; i++)
             {
-                for (int j = chunkY - 1; j <= chunkY + 1; j++)
+                for (int j = chunkY - distance; j <= chunkY + distance; j++)
                 {
                     if (!_world.Chunks.ContainsKey((i, j)))
                     {
