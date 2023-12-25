@@ -20,7 +20,7 @@ namespace DungeonFrame
         public QCTerrainGenerator NoiseGenerator;
         //DEMO
 
-        private static string WorldDataPath = "WorldData";
+        public static string WorldDataPath = "WorldData";
 
         public static void EnsureWorldDataFolderExists()
         {
@@ -32,13 +32,13 @@ namespace DungeonFrame
 
         static World()
         {
-            //DEBUG
+            ////DEBUG
             if (Directory.Exists(WorldDataPath))
             {
                 Directory.Delete(WorldDataPath, true);
             }
-            //DEBUG
-
+            ////DEBUG
+            //
             EnsureWorldDataFolderExists();
         }
 
@@ -103,7 +103,6 @@ namespace DungeonFrame
             {
                 string json = File.ReadAllText(filePath);
                 chunk = JsonSerializer.Deserialize<Chunk>(json);
-                
             }
             else
             {
@@ -141,7 +140,7 @@ namespace DungeonFrame
                     {
                         tile = 0; // WASSER
                     }
-                    chunk.Tiles[x, y] = (int)(noiseValue * 100f);
+                    //chunk.Tiles[x, y] = (int)(noiseValue * 100f);
                     chunk.Tiles[x, y] = tile;
                 }
             }
@@ -193,9 +192,9 @@ namespace DungeonFrame
         {
             (int x, int y) chunkKey = (x, y);
 
-            if (Chunks.TryRemove(chunkKey, out _))
+            if (Chunks.TryRemove(chunkKey, out var chunk))
             {
-                SaveChunkAsync(x, y);
+                SaveChunk(x, y, chunk);
             }
         }
 

@@ -9,8 +9,8 @@ namespace DungeonFrame
 {
     public class Chunk
     {
-        public static int Width { get; set; } = 16;
-        public static int Height { get; set; } = 16;
+        public static int Width { get; set; } = 32;
+        public static int Height { get; set; } = 32;
         public int X { get; set; }
         public int Y { get; set; }
         [JsonIgnore]
@@ -48,9 +48,13 @@ namespace DungeonFrame
             return flatArray;
         }
 
-        // Wandelt ein 1D-Array in ein 2D-Array um
         private static int[,] UnflattenArray(int[] flatArray, int width, int height)
         {
+            if (flatArray.Length != width * height)
+            {
+                throw new ArgumentException("Die Länge des flachen Arrays entspricht nicht der erwarteten Größe.");
+            }
+
             int[,] array = new int[height, width];
             for (int j = 0; j < height; j++)
             {
@@ -61,6 +65,7 @@ namespace DungeonFrame
             }
             return array;
         }
+
 
         public Chunk() { }
     }

@@ -78,7 +78,7 @@ namespace DungeonFrame
                             int tileId = chunk.Tiles[localX, localY] + (CurrentStyle == RenderingStyle.Isometric ? 10 : 0);
                             float alpha = 1;
                             //DEMO
-                            //tileId = 0;
+                            //tileId = 2;
                             //alpha = chunk.Tiles[localX, localY] / 100f;
                             //demo
 
