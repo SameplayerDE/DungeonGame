@@ -17,7 +17,6 @@ namespace DungeonFrame
         public enum RenderingStyle { Isometric, Orthogonal }
         public RenderingStyle CurrentStyle { get; set; } = RenderingStyle.Orthogonal;
 
-
         public void Draw(QCRenderContext context, GameTime gameTime, World world, Texture2D tileSet)
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Space) && Keyboard.GetState().IsKeyDown(Keys.LeftShift))
@@ -28,11 +27,10 @@ namespace DungeonFrame
             {
                 CurrentStyle = RenderingStyle.Isometric;
             }
-            
 
             RenderCalls = 0;
-            int tileWidth = 64;
-            int tileHeight = 32;
+            int standardTileWidth = 64;
+            int standardTileHeight = 32;
 
             // Ermitteln des sichtbaren Bereichs
             var cameraViewMatrix = context.Camera.GetViewMatrix();
@@ -56,47 +54,31 @@ namespace DungeonFrame
                         int globalX = chunkGlobalX + localX;
                         int globalY = chunkGlobalY + localY;
 
-                        int isoX, isoY;
-                        if (CurrentStyle == RenderingStyle.Isometric)
+                        Tile tile = world.GetTileById(chunk.Tiles[localX, localY]);
+                        if (tile != null)
                         {
-                            isoX = (globalX - globalY) * (tileWidth / 2);
-                            isoY = (globalX + globalY) * (tileHeight / 2);
-                        }
-                        else // Orthogonal
-                        {
-                            isoX = globalX * tileWidth;
-                            isoY = globalY * tileHeight;
-                        }
-
-                        // Isometrische Positionierung
-                        //int isoX = (globalX - globalY) * (tileWidth / 2);
-                        //int isoY = (globalX + globalY) * (tileHeight / 2);
-
-                        // Prüfen, ob das Tile im sichtbaren Bereich liegt
-                        if (isoX > topLeft.X - tileWidth && isoX < bottomRight.X && isoY > topLeft.Y - tileHeight && isoY < bottomRight.Y)
-                        {
-                            int tileId = chunk.Tiles[localX, localY] + (CurrentStyle == RenderingStyle.Isometric ? 10 : 0);
-                            float alpha = 1;
-                            //DEMO
-                            //tileId = 2;
-                            //alpha = chunk.Tiles[localX, localY] / 100f;
-                            //demo
-
-                            Tile tile = world.GetTileById(tileId);
-                            if (tile != null)
+                            int baseIsoX, baseIsoY;
+                            if (CurrentStyle == RenderingStyle.Isometric)
                             {
-                                int tileDepth = tile.Depth;
+                                baseIsoX = (globalX - globalY) * standardTileWidth / 2;
+                                baseIsoY = (globalX + globalY) * standardTileHeight / 2;
+                            }
+                            else // Orthogonal
+                            {
+                                baseIsoX = globalX * standardTileWidth;
+                                baseIsoY = globalY * standardTileHeight;
+                            }
 
-                                // Berechnung der source Rectangle
-                                int tileRow = tile.Id / (tileSet.Width / tileWidth);
-                                int tileColumn = tile.Id % (tileSet.Width / tileWidth);
-                                Rectangle source = new Rectangle(tileColumn * tileWidth, tileRow * (tileHeight + tileDepth), tileWidth, tileHeight + tileDepth);
+                            int isoX = baseIsoX - tile.BaseXOffset;
+                            int isoY = baseIsoY - tile.BaseYOffset;
 
-                                // Anpassung für die Tiefe
-                                isoY -= tileDepth;
+                            // Prüfen, ob das Tile im sichtbaren Bereich liegt
+                            if (isoX > topLeft.X - tile.SourceL && isoX < bottomRight.X && isoY > topLeft.Y - tile.SourceB && isoY < bottomRight.Y)
+                            {
+                                Rectangle source = new Rectangle(tile.SourceX, tile.SourceY, tile.SourceL, tile.SourceB);
+                                Rectangle destination = new Rectangle(isoX, isoY, tile.SourceL, tile.SourceB);
 
-                                Rectangle destination = new Rectangle(isoX, isoY, tileWidth, tileHeight + tileDepth);
-                                context.SpriteBatch.Draw(tileSet, destination, source, Color.White * alpha);
+                                context.SpriteBatch.Draw(tileSet, destination, source, Color.White);
                                 RenderCalls++;
                             }
                         }
@@ -105,6 +87,9 @@ namespace DungeonFrame
             }
             Console.WriteLine("RenderCalls: " + RenderCalls);
         }
+
+
+
     }
 
 }

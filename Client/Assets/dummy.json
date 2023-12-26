@@ -1,23 +1,58 @@
 ﻿[
   {
     "Id": 0,
+    "SourceX": 0,
+    "SourceY": 0,
+    "SourceL": 64,
+    "SourceB": 32,
+    "BaseXOffset": 0,
+    "BaseYOffset": 0,
     "Depth": 0,
     "IsWalkable": true
   },
   {
     "Id": 1,
+    "SourceX": 64,
+    "SourceY": 0,
+    "SourceL": 64,
+    "SourceB": 32,
+    "BaseXOffset": 0,
+    "BaseYOffset": 0,
     "Depth": 0,
-    "IsWalkable": false
+    "IsWalkable": true
   },
   {
     "Id": 2,
+    "SourceX": 128,
+    "SourceY": 0,
+    "SourceL": 64,
+    "SourceB": 32,
+    "BaseXOffset": 0,
+    "BaseYOffset": 0,
     "Depth": 0,
     "IsWalkable": true
   },
   {
     "Id": 3,
+    "SourceX": 192,
+    "SourceY": 0,
+    "SourceL": 64,
+    "SourceB": 32,
+    "BaseXOffset": 0,
+    "BaseYOffset": 0,
     "Depth": 0,
-    "IsWalkable": false
+    "IsWalkable": true
+  },
+  {
+    "Id": 1,
+    "SourceX": 0,
+    "SourceY": 64,
+    "SourceL": 192,
+    "SourceB": 192,
+    "BaseXOffset": 64,
+    "BaseYOffset": 160,
+    "Depth": 0,
+    "IsWalkable": true
   },
   {
     "Id": 10,
