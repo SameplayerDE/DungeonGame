@@ -9,8 +9,8 @@ namespace DungeonFrame
 {
     public class Chunk
     {
-        public static int Width { get; set; } = 32;
-        public static int Height { get; set; } = 32;
+        public static int Width { get; set; } = 8;
+        public static int Height { get; set; } = 8;
         public int X { get; set; }
         public int Y { get; set; }
         [JsonIgnore]

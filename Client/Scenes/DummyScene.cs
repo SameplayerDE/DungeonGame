@@ -128,7 +128,6 @@ namespace Client.Scenes
             int chunkX = (int)Math.Floor(_player.Position.X / (Chunk.Width * 64));
             int chunkY = (int)Math.Floor(_player.Position.Y / (Chunk.Height * 32));
 
-
             Console.WriteLine(_player.Position.X);
             Console.WriteLine(_player.Position.Y);
             Console.WriteLine(chunkX);
@@ -166,6 +165,18 @@ namespace Client.Scenes
             _player.Draw(context, gameTime);
 
             base.Draw(context, gameTime);
+        }
+
+        private Vector2 ToIsometric(Vector2 position)
+        {
+            float isoX = (Math.Abs(position.X - position.Y));
+            float isoY = (Math.Abs(position.X) + Math.Abs(position.Y)) / 2;
+
+            // Richtung der Originalkoordinaten berücksichtigen
+            isoX *= Math.Sign(position.X);
+            isoY *= Math.Sign(position.Y);
+
+            return new Vector2(isoX, isoY);
         }
     }
 }

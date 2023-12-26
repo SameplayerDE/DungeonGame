@@ -87,9 +87,6 @@ namespace DungeonFrame
             }
             Console.WriteLine("RenderCalls: " + RenderCalls);
         }
-
-
-
     }
 
 }
