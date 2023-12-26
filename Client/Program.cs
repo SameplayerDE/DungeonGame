@@ -2,29 +2,8 @@
 using QColonFrame;
 using System;
 
-QCWaveFunction<int> waveFunction = new QCWaveFunction<int>(5, 5);
-
-// Füge mögliche Zustände hinzu
-for (int i = 0; i < 10; i++)
-{
-    waveFunction.AddState(i);
-}
-
-// Füge Regeln hinzu
-waveFunction.AddRule(new NeighborRule(2)); // Maximaler Unterschied von 2 zu den Nachbarn
-waveFunction.AddRule(new SpecificValueRule(0, 0, 5)); // Spezifischer Wert für die Zelle (0,0)
-
-// Gib den Zustand des Rasters in der Konsole aus
-waveFunction.PrintGrid();
-
-// Führe den Wave-Function-Collapse aus
-waveFunction.Collapse();
-
-// Gib den Zustand des Rasters in der Konsole aus
-waveFunction.PrintGrid();
-
-//using var game = new Client.Game1();
-//game.Run();
+using var game = new Client.Game1();
+game.Run();
 
 public class SpecificValueRule : QCWaveRule<int>
 {
