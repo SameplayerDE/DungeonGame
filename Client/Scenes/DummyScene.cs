@@ -136,7 +136,7 @@ namespace Client.Scenes
 
             //Unload all other
 
-            int distance = 1;
+            int distance = 10;
 
             foreach (var chunkKey in _world.Chunks.Keys.ToList())
             {
