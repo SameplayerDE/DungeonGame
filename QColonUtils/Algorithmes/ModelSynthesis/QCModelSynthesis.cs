@@ -3,12 +3,8 @@ using System.Data;
 
 namespace QColonUtils.Algorithmes.ModelSynthesis
 {
-
-
-
     public class QCModelSynthesis
     {
-
         public enum Direction
         {
             Up, Down, Left, Right
@@ -20,6 +16,7 @@ namespace QColonUtils.Algorithmes.ModelSynthesis
         public readonly int Height;
         public readonly int Width;
         private Dictionary<(int x, int y), List<int>>? _progess = null; //working grid
+        private Dictionary<int, Dictionary<Direction, HashSet<int>>> _rules; //working grid
         private (int x, int y) _current = (0, 0); //current position
 
         public QCModelSynthesis(int width, int height)
@@ -28,6 +25,7 @@ namespace QColonUtils.Algorithmes.ModelSynthesis
             Height = height;
             States = new List<int>();
             Result = new int[width, height];
+            _rules = new();
         }
 
         public void Learn(int[,] model)
@@ -42,6 +40,7 @@ namespace QColonUtils.Algorithmes.ModelSynthesis
                     AddState(model[x, y]);
                 }
             }
+            PreCalculateRules();
             InitializeProgress();
         }
 
@@ -159,6 +158,14 @@ namespace QColonUtils.Algorithmes.ModelSynthesis
             return result;
         }
 
+        private void PreCalculateRules()
+        {
+            foreach (var state in States)
+            {
+                _rules[state] = PossibleNeighbourStates(state);
+            }
+        }
+
         private void MoveToNext()
         {
             _current.x++;
@@ -225,7 +232,7 @@ namespace QColonUtils.Algorithmes.ModelSynthesis
         {
             if (IsWithinBounds(x, y))
             {
-                var possibleStates = PossibleNeighbourStates(state);
+                var possibleStates = _rules[state];
                 var allowedStates = possibleStates[fromDirection];
 
                 _progess[(x, y)].RemoveAll(item => !allowedStates.Contains(item));

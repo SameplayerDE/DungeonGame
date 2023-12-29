@@ -37,7 +37,7 @@ namespace Client
             { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         };
 
-        QCModelSynthesis modelSynthesis = new QCModelSynthesis(640, 640);
+        QCModelSynthesis modelSynthesis = new QCModelSynthesis(250, 250);
 
 
         public Game1()
@@ -107,13 +107,13 @@ namespace Client
             //_spriteBatch.End();
 
             _spriteBatch.Begin();
-
+            
             for (int x = 0; x < modelSynthesis.Width; x++)
             {
                 for (int y = 0; y < modelSynthesis.Height; y++)
                 {
                     int id = modelSynthesis.Result[x, y];
-
+            
                     // Wähle die Farbe basierend auf der ID
                     Color tileColor;
                     switch (id)
@@ -134,11 +134,11 @@ namespace Client
                             tileColor = Color.White; // Standardfarbe für unbekannte IDs
                             break;
                     }
-
+            
                     _spriteBatch.Draw(_tileSet, new Rectangle(x * 4, y * 4, 4, 4), tileColor);
                 }
             }
-
+            
             _spriteBatch.End();
 
 
