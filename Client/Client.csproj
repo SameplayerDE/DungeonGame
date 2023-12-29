@@ -24,6 +24,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DungeonFrame\DungeonFrame.csproj" />
+    <ProjectReference Include="..\QColonUtils\QColonUtils.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Assets\dummy.json">
