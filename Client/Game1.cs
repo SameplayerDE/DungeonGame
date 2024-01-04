@@ -15,6 +15,9 @@ namespace Client
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        private RenderTarget2D _gameplayRenderTarget; //world, map, entities
+        private RenderTarget2D _overlayRenderTarget; //minimap
+        private RenderTarget2D _interfaceRenderTarget; //user interface
 
         private QCRenderContext _context;
         private Camera _camera;
@@ -22,23 +25,9 @@ namespace Client
         private World _world;
         private Texture2D _tileSet;
 
-        int[,] example = new int[,]
-        {
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            { 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0},
-            { 0, 0, 1, 1, 2, 2, 2, 1, 1, 0, 0},
-            { 0, 0, 1, 2, 2, 3, 2, 2, 1, 0, 0},
-            { 0, 0, 1, 2, 3, 3, 3, 2, 1, 0, 0},
-            { 0, 0, 1, 2, 2, 3, 2, 2, 1, 0, 0},
-            { 0, 0, 1, 1, 2, 2, 2, 1, 1, 0, 0},
-            { 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        };
-
-        QCModelSynthesis modelSynthesis = new QCModelSynthesis(250, 250);
-
+        private int _width = 1280;
+        private int _height = 720;
+        private Rectangle _renderWindow;
 
         public Game1()
         {
@@ -53,8 +42,38 @@ namespace Client
         protected override void Initialize()
         {
 
-            modelSynthesis.Learn(example);
-            modelSynthesis.Collapse();
+            // Initialisiere das Gameplay Render Target
+            _gameplayRenderTarget = new RenderTarget2D(
+                _graphics.GraphicsDevice,
+                _width, // Breite
+                _height, // Höhe
+                false,
+                SurfaceFormat.Color,
+                DepthFormat.None,
+                0,
+                RenderTargetUsage.DiscardContents);
+
+            // Initialisiere das Overlay (Minimap) Render Target
+            _overlayRenderTarget = new RenderTarget2D(
+                _graphics.GraphicsDevice,
+                _width, // Breite
+                _height, // Höhe
+                false,
+                SurfaceFormat.Color,
+                DepthFormat.None,
+                0,
+                RenderTargetUsage.DiscardContents);
+
+            // Initialisiere das Interface Render Target
+            _interfaceRenderTarget = new RenderTarget2D(
+                _graphics.GraphicsDevice,
+                _width, // Breite
+                _height, // Höhe
+                false,
+                SurfaceFormat.Color,
+                DepthFormat.None,
+                0,
+                RenderTargetUsage.DiscardContents);
 
             _camera = new Camera(GraphicsDevice.Viewport);
             _player = new DungeonEntity();
@@ -91,56 +110,34 @@ namespace Client
             _camera.Update(gameTime);
             QCSceneHandler.Instance.Update(gameTime);
 
+            _renderWindow = new Rectangle(0, 0, _width / 2, _height / 2);
+
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            //GraphicsDevice.SetRenderTarget(_renderTarget);
-            GraphicsDevice.Clear(Color.Black);
-            //QCSceneHandler.Instance.Draw(gameTime);
-            //GraphicsDevice.SetRenderTarget(null);
 
-            //_spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
-            //    DepthStencilState.Default, RasterizerState.CullCounterClockwise, effect: _blur);
-            //_spriteBatch.Draw(_renderTarget, RenderTargetRectangle, Color.White);
-            //_spriteBatch.End();
+            GraphicsDevice.SetRenderTarget(_gameplayRenderTarget);
+            GraphicsDevice.Clear(Color.Transparent);
+            QCSceneHandler.Instance.Draw(gameTime);
+
+            GraphicsDevice.SetRenderTarget(_overlayRenderTarget);
+            GraphicsDevice.Clear(Color.Transparent);
+            //QCSceneHandler.Instance.Draw(gameTime);
+
+            GraphicsDevice.SetRenderTarget(_interfaceRenderTarget);
+            GraphicsDevice.Clear(Color.Transparent);
+            //QCSceneHandler.Instance.Draw(gameTime);
+
+            GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.Clear(Color.Black);
 
             _spriteBatch.Begin();
-            
-            for (int x = 0; x < modelSynthesis.Width; x++)
-            {
-                for (int y = 0; y < modelSynthesis.Height; y++)
-                {
-                    int id = modelSynthesis.Result[x, y];
-            
-                    // Wähle die Farbe basierend auf der ID
-                    Color tileColor;
-                    switch (id)
-                    {
-                        case 0:
-                            tileColor = Color.Blue;
-                            break;
-                        case 1:
-                            tileColor = Color.Yellow;
-                            break;
-                        case 2:
-                            tileColor = Color.Green;
-                            break;
-                        case 3:
-                            tileColor = Color.Gray;
-                            break;
-                        default:
-                            tileColor = Color.White; // Standardfarbe für unbekannte IDs
-                            break;
-                    }
-            
-                    _spriteBatch.Draw(_tileSet, new Rectangle(x * 4, y * 4, 4, 4), tileColor);
-                }
-            }
-            
+            _spriteBatch.Draw(_gameplayRenderTarget, _renderWindow, Color.White);
+            _spriteBatch.Draw(_overlayRenderTarget, _renderWindow, Color.White);
+            _spriteBatch.Draw(_interfaceRenderTarget, _renderWindow, Color.White);
             _spriteBatch.End();
-
 
             base.Draw(gameTime);
         }

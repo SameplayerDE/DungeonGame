@@ -13,7 +13,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoiseImager", "NoiseImager\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QColonUtils", "QColonUtils\QColonUtils.csproj", "{A77CB654-5762-45FB-9D41-6C2B3CA32570}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dummy", "Dummy\Dummy.csproj", "{5706A3ED-286B-4D8F-B24D-A262D34002C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dummy", "Dummy\Dummy.csproj", "{5706A3ED-286B-4D8F-B24D-A262D34002C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapMaker", "MapMaker\MapMaker.csproj", "{863C9C51-BD53-4F1F-9B52-216B840C1507}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UEyeFrame", "UEyeFrame\UEyeFrame.csproj", "{A67CF09C-4B5E-4F76-A9BC-93302DE38344}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyEye", "MyEye\MyEye.csproj", "{3B4EE8F6-49AF-401E-8B76-27FA48DB19D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +51,18 @@ Global
 		{5706A3ED-286B-4D8F-B24D-A262D34002C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5706A3ED-286B-4D8F-B24D-A262D34002C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5706A3ED-286B-4D8F-B24D-A262D34002C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{863C9C51-BD53-4F1F-9B52-216B840C1507}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{863C9C51-BD53-4F1F-9B52-216B840C1507}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{863C9C51-BD53-4F1F-9B52-216B840C1507}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{863C9C51-BD53-4F1F-9B52-216B840C1507}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A67CF09C-4B5E-4F76-A9BC-93302DE38344}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A67CF09C-4B5E-4F76-A9BC-93302DE38344}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A67CF09C-4B5E-4F76-A9BC-93302DE38344}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A67CF09C-4B5E-4F76-A9BC-93302DE38344}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B4EE8F6-49AF-401E-8B76-27FA48DB19D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B4EE8F6-49AF-401E-8B76-27FA48DB19D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B4EE8F6-49AF-401E-8B76-27FA48DB19D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B4EE8F6-49AF-401E-8B76-27FA48DB19D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
