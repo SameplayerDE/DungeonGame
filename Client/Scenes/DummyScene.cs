@@ -18,6 +18,7 @@ namespace Client.Scenes
         private FastNoiseLite _noise;
         private World _world;
         private Texture2D _tileSet;
+        private Texture2D _monsterTexture;
         private float _noiseOffsetX = 0f;
         private float _noiseOffsetY = 0f;
         private float currentScrollValue = 0f;
@@ -45,15 +46,12 @@ namespace Client.Scenes
             _player.Flags = DungeonEntityFlags.Drawable;
             _player.Position = new Vector2(0, 0);
 
-            for (float y = 0; y <= Game.Window.ClientBounds.Height / scale; y += 1)
+            for (int i = 0; i < 10; i++)
             {
-                for (float x = 0; x <= Game.Window.ClientBounds.Width / scale; x += 1)
-                {
-                    var entity = new DungeonEntity();
-                    entity.Flags = DungeonEntityFlags.Drawable;
-                    entity.Position = new Vector2(x * scale, y * scale);
-                    _entities.Add(entity);
-                }
+                var monster = new Monster();
+                monster.Flags = DungeonEntityFlags.Drawable | DungeonEntityFlags.Updateable;
+                monster.Position = new Vector2(new Random().Next(0, 1000), new Random().Next(0, 1000));
+                _entities.Add(monster);
             }
 
             TileAtlas tileAtlas = TileAtlas.LoadTilesFromJson("Assets/dummy.json");
@@ -65,7 +63,8 @@ namespace Client.Scenes
         public override void LoadContent()
         {
             var texture = Content.Load<Texture2D>("missing");
-            _entities.ForEach(e => e.Texture = texture);
+            _monsterTexture = Content.Load<Texture2D>("monster");
+            _entities.ForEach(e => e.Texture = _monsterTexture);
             _player.Texture = texture;
             _tileSet = Content.Load<Texture2D>("tileset");
             base.LoadContent();
@@ -74,35 +73,9 @@ namespace Client.Scenes
         public override void Update(GameTime gameTime)
         {
             _inputActionHandler.Update(gameTime, ClientCore.Input);
-            //float noiseScale = 4;
-            //
-            //_noiseOffsetX += 0.1f; // Geschwindigkeit der Rauschbewegung in X
-            //_noiseOffsetY += 0.1f; // Geschwindigkeit der Rauschbewegung in Y
-            //
-            //for (int y = 0; y < _world.Height; y++)
-            //{
-            //    for (int x = 0; x < _world.Width; x++)
-            //    {
-            //        float noiseValue = _noise.GetNoise(
-            //            (x + _noiseOffsetX) * noiseScale,
-            //            (y + _noiseOffsetY) * noiseScale,
-            //            (float)gameTime.TotalGameTime.TotalSeconds * 10);
-            //
-            //        int tileId;
-            //        if (noiseValue < -0.6) tileId = 7; // ID für Tiefer Ozean
-            //        else if (noiseValue < -0.2) tileId = 0; // ID für Flacher Ozean
-            //        else if (noiseValue < 0) tileId = 1; // ID für Küstenbereich
-            //        else if (noiseValue < 0.2) tileId = 2; // ID für Strand
-            //        else if (noiseValue < 0.4) tileId = 3; // ID für Grasland
-            //        else if (noiseValue < 0.6) tileId = 4; // ID für Wald
-            //        else if (noiseValue < 0.8) tileId = 5; // ID für Hügelland
-            //        else tileId = 6; // ID für Berggipfel
-            //
-            //        _world.Set(x, y, tileId);
-            //    }
-            //}
 
-            
+            _entities.ForEach(e => e.Update(gameTime));
+
             float previousScrollValue = currentScrollValue; // Du musst den vorherigen Scroll-Wert speichern
             currentScrollValue = Mouse.GetState().ScrollWheelValue;
             float zoomSpeed = 0.001f; // Geschwindigkeit des Zooms, kannst du anpassen
@@ -160,9 +133,9 @@ namespace Client.Scenes
 
         public override void Draw(QCRenderContext context, GameTime gameTime)
         {
-            //_entities.ForEach(e => e.Draw(context, gameTime));
-            WorldRenderer.Instance.Draw(context, gameTime, _world, _tileSet);
+             WorldRenderer.Instance.Draw(context, gameTime, _world, _tileSet);
             _player.Draw(context, gameTime);
+            _entities.ForEach(e => e.Draw(context, gameTime));
 
             base.Draw(context, gameTime);
         }

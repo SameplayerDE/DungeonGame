@@ -15,7 +15,7 @@ namespace DungeonFrame
         public ConcurrentDictionary<(int, int), Chunk> Chunks;
 
         //DEMO
-        public int Seed = 101199;
+        public int Seed = 10111999;
         public float NoiseScale = 0.4f;
         public QCTerrainGenerator NoiseGenerator;
         //DEMO
